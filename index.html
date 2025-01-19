@@ -4,75 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weighted GPA Calculator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            margin: 20px; 
-            background-color: #121212; 
-            color: #ffffff;
-            text-align: center;
-        }
-        .container { 
-            max-width: 800px; 
-            margin: auto; 
-            background: #1e1e1e; 
-            padding: 20px; 
-            border-radius: 10px; 
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
-        }
-        .header {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        .courses-container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 10px; 
-            justify-content: center;
-        }
-        .course { 
-            border: 1px solid #ccc; 
-            padding: 10px; 
-            width: 250px; 
-            background: #2a2a2a; 
-            border-radius: 5px;
-        }
-        label, select, input { 
-            display: block; 
-            margin: 5px 0;
-            color: #ffffff;
-        }
-        select {
-            background: #333;
-            color: #ffffff;
-            border: 1px solid #555;
-            padding: 5px;
-            border-radius: 5px;
-        }
-        option {
-            background: #333;
-            color: #ffffff;
-        }
-        button { 
-            margin-top: 10px; 
-            padding: 10px 15px;
-            background: #6200ea;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background: #3700b3;
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        .courses-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .course { border: 1px solid #ccc; padding: 10px; width: 250px; }
+        label, select, input { display: block; margin: 5px 0; }
+        button { margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">Weighted GPA Calculator</div>
+        <h2>Weighted GPA Calculator</h2>
         <form id="gpaForm">
             <div class="courses-container" id="gradesContainer"></div>
             <button type="button" onclick="addCourse()">Add Course</button>
@@ -127,6 +70,26 @@
                 </label>
             `;
             container.appendChild(div);
+        }
+        
+        function calculateGPA() {
+            let courses = document.querySelectorAll('.course');
+            let totalGPA = 0;
+            let count = 0;
+            
+            courses.forEach(course => {
+                let level = course.querySelector('.level').value;
+                let grades = Array.from(course.querySelectorAll('.grade')).map(select => select.value).filter(grade => grade !== "");
+                
+                let sum = grades.reduce((acc, grade) => acc + gradeScale[level][grade], 0);
+                let avg = sum / grades.length;
+                
+                totalGPA += avg;
+                count++;
+            });
+            
+            let finalGPA = totalGPA / count;
+            document.getElementById('result').innerText = `Your Weighted GPA: ${finalGPA.toFixed(2)}`;
         }
     </script>
 </body>
