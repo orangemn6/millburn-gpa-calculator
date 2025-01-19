@@ -6,8 +6,10 @@
     <title>Weighted GPA Calculator</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
-        .container { max-width: 500px; margin: auto; }
-        label, select, input { display: block; margin: 10px 0; }
+        .container { max-width: 800px; margin: auto; }
+        .courses-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .course { border: 1px solid #ccc; padding: 10px; width: 250px; }
+        label, select, input { display: block; margin: 5px 0; }
         button { margin-top: 10px; }
     </style>
 </head>
@@ -15,7 +17,7 @@
     <div class="container">
         <h2>Weighted GPA Calculator</h2>
         <form id="gpaForm">
-            <div id="gradesContainer"></div>
+            <div class="courses-container" id="gradesContainer"></div>
             <button type="button" onclick="addCourse()">Add Course</button>
             <button type="button" onclick="calculateGPA()">Calculate GPA</button>
         </form>
@@ -32,7 +34,11 @@
         function addCourse() {
             let container = document.getElementById('gradesContainer');
             let div = document.createElement('div');
+            div.classList.add('course');
             div.innerHTML = `
+                <label>Class Name:
+                    <input type="text" class="class-name" placeholder="Enter class name">
+                </label>
                 <label>Class Level:
                     <select class="level">
                         <option value="CPA">CPA</option>
@@ -67,7 +73,7 @@
         }
         
         function calculateGPA() {
-            let courses = document.querySelectorAll('#gradesContainer > div');
+            let courses = document.querySelectorAll('.course');
             let totalGPA = 0;
             let count = 0;
             
