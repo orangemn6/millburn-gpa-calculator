@@ -44,6 +44,17 @@
             margin: 5px 0;
             color: #ffffff;
         }
+        select {
+            background: #333;
+            color: #ffffff;
+            border: 1px solid #555;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        option {
+            background: #333;
+            color: #ffffff;
+        }
         button { 
             margin-top: 10px; 
             padding: 10px 15px;
@@ -116,26 +127,6 @@
                 </label>
             `;
             container.appendChild(div);
-        }
-        
-        function calculateGPA() {
-            let courses = document.querySelectorAll('.course');
-            let totalGPA = 0;
-            let count = 0;
-            
-            courses.forEach(course => {
-                let level = course.querySelector('.level').value;
-                let grades = Array.from(course.querySelectorAll('.grade')).map(select => select.value).filter(grade => grade !== "");
-                
-                let sum = grades.reduce((acc, grade) => acc + gradeScale[level][grade], 0);
-                let avg = sum / grades.length;
-                
-                totalGPA += avg;
-                count++;
-            });
-            
-            let finalGPA = totalGPA / count;
-            document.getElementById('result').innerText = `Your Weighted GPA: ${finalGPA.toFixed(2)}`;
         }
     </script>
 </body>
