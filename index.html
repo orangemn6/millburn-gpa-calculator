@@ -76,6 +76,7 @@
             <button type="button" onclick="calculateGPA()">Calculate GPA</button>
         </form>
         <h3 id="result"></h3>
+        <h3 id="unweightedResult"></h3>
     </div>
     
     <script>
@@ -84,6 +85,8 @@
             'ACC': { 'A': 4.66, 'A-': 4.33, 'B+': 4.0, 'B': 3.66, 'B-': 3.33, 'C+': 3.0, 'C': 2.66, 'C-': 2.33, 'D+': 2.0, 'D': 1.66, 'D-': 1.33, 'F': 0.0 },
             'AP': { 'A': 5.0, 'A-': 4.66, 'B+': 4.33, 'B': 4.0, 'B-': 3.66, 'C+': 3.33, 'C': 3.0, 'C-': 2.66, 'D+': 2.33, 'D': 2.0, 'D-': 1.66, 'F': 0.0 }
         };
+        
+        const unweightedScale = { 'A': 4.0, 'A-': 3.66, 'B+': 3.33, 'B': 3.0, 'B-': 2.66, 'C+': 2.33, 'C': 2.0, 'C-': 1.66, 'D+': 1.33, 'D': 1.0, 'D-': 0.66, 'F': 0.0 };
         
         function addCourse() {
             let container = document.getElementById('gradesContainer');
@@ -110,40 +113,34 @@
                         ${Object.keys(gradeScale['CPA']).map(grade => `<option value="${grade}">${grade}</option>`).join('')}
                     </select>
                 </label>
-                <label>Q3 Grade (Optional):
-                    <select class="grade">
-                        <option value="">--</option>
-                        ${Object.keys(gradeScale['CPA']).map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                </label>
-                <label>Q4 Grade (Optional):
-                    <select class="grade">
-                        <option value="">--</option>
-                        ${Object.keys(gradeScale['CPA']).map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                </label>
             `;
             container.appendChild(div);
         }
         
         function calculateGPA() {
             let courses = document.querySelectorAll('.course');
-            let totalGPA = 0;
-            let count = 0;
+            let totalWeightedGPA = 0, totalUnweightedGPA = 0, count = 0;
             
             courses.forEach(course => {
                 let level = course.querySelector('.level').value;
                 let grades = Array.from(course.querySelectorAll('.grade')).map(select => select.value).filter(grade => grade !== "");
                 
-                let sum = grades.reduce((acc, grade) => acc + gradeScale[level][grade], 0);
-                let avg = sum / grades.length;
+                let sumWeighted = grades.reduce((acc, grade) => acc + gradeScale[level][grade], 0);
+                let sumUnweighted = grades.reduce((acc, grade) => acc + unweightedScale[grade], 0);
                 
-                totalGPA += avg;
+                let avgWeighted = sumWeighted / grades.length;
+                let avgUnweighted = sumUnweighted / grades.length;
+                
+                totalWeightedGPA += avgWeighted;
+                totalUnweightedGPA += avgUnweighted;
                 count++;
             });
             
-            let finalGPA = totalGPA / count;
-            document.getElementById('result').innerText = `Your Weighted GPA: ${finalGPA.toFixed(2)}`;
+            let finalWeightedGPA = totalWeightedGPA / count;
+            let finalUnweightedGPA = totalUnweightedGPA / count;
+            
+            document.getElementById('result').innerText = `Your Weighted GPA: ${finalWeightedGPA.toFixed(2)}`;
+            document.getElementById('unweightedResult').innerText = `Your Unweighted GPA: ${finalUnweightedGPA.toFixed(2)}`;
         }
     </script>
 </body>
