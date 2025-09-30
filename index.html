@@ -1,155 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weighted GPA Calculator</title>
-    <!-->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .courses-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .course {
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 5px;
-            background: #fafafa;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 10px;
-        }
-        select, input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 15px;
-            border: none;
-            border-radius: 5px;
-            background: #007BFF;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        h3 {
-            text-align: center;
-            margin-top: 15px;
-        }
-        @media (max-width: 600px) {
-            .container {
-                width: 90%;
-            }
-        }
-    </style>
-    </!--->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/digitallytailored/classless@latest/classless.min.css">
-    
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weighted GPA Calculator</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 20px;
+      background: #fafafa;
+      color: #222;
+    }
+    .container {
+      max-width: 950px;
+      margin: auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      font-weight: 600;
+    }
+    input, select {
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 100%;
+      font-size: 14px;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .delete-btn {
+      background: #dc3545;
+      padding: 4px 8px;
+      font-size: 14px;
+      border-radius: 4px;
+    }
+    .delete-btn:hover {
+      background: #b02a37;
+    }
+    #result {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Weighted GPA Calculator</h2>
-        <form id="gpaForm">
-            <div class="courses-container" id="gradesContainer"></div>
-            <button type="button" onclick="addCourse()">Add Course</button>
-            <button type="button" onclick="calculateGPA()">Calculate GPA</button>
-        </form>
-        <h3 id="result"></h3>
-    </div>
-    
-    <script>
-        const gradeScale = {
-            'CPA': { 'A': 4.33, 'A-': 4.0, 'B+': 3.66, 'B': 3.33, 'B-': 3.0, 'C+': 2.66, 'C': 2.33, 'C-': 2.0, 'D+': 1.66, 'D': 1.33, 'D-': 1.0, 'F': 0.0 },
-            'ACC': { 'A': 4.66, 'A-': 4.33, 'B+': 4.0, 'B': 3.66, 'B-': 3.33, 'C+': 3.0, 'C': 2.66, 'C-': 2.33, 'D+': 2.0, 'D': 1.66, 'D-': 1.33, 'F': 0.0 },
-            'AP': { 'A': 5.0, 'A-': 4.66, 'B+': 4.33, 'B': 4.0, 'B-': 3.66, 'C+': 3.33, 'C': 3.0, 'C-': 2.66, 'D+': 2.33, 'D': 2.0, 'D-': 1.66, 'F': 0.0 }
-        };
-        
-        function addCourse() {
-            let container = document.getElementById('gradesContainer');
-            let div = document.createElement('div');
-            div.classList.add('course');
-            div.innerHTML = `
-                <label>Class Name:
-                    <input type="text" class="class-name" placeholder="Enter class name">
-                </label>
-                <label>Class Level:
-                    <select class="level">
-                        <option value="CPA">CPA</option>
-                        <option value="ACC">ACC</option>
-                        <option value="AP">AP</option>
-                    </select>
-                </label>
-                <label>Q1 Grade:
-                    <select class="grade">
-                        ${Object.keys(gradeScale['CPA']).map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                </label>
-                <label>Q2 Grade:
-                    <select class="grade">
-                        ${Object.keys(gradeScale['CPA']).map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                </label>
-                <label>Q3 Grade (Optional):
-                    <select class="grade">
-                        <option value="">--</option>
-                        ${Object.keys(gradeScale['CPA']).map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                </label>
-                <label>Q4 Grade (Optional):
-                    <select class="grade">
-                        <option value="">--</option>
-                        ${Object.keys(gradeScale['CPA']).map(grade => `<option value="${grade}">${grade}</option>`).join('')}
-                    </select>
-                </label>
-            `;
-            container.appendChild(div);
+  <div class="container">
+    <h2>Weighted GPA Calculator</h2>
+    <form id="gpaForm">
+      <table>
+        <thead>
+          <tr>
+            <th>Class Name</th>
+            <th>Level</th>
+            <th>Q1</th>
+            <th>Q2</th>
+            <th>Q3</th>
+            <th>Q4</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="gradesContainer"></tbody>
+      </table>
+      <div class="actions">
+        <button type="button" onclick="addCourse()">Add Class</button>
+        <button type="button" onclick="calculateGPA()">Calculate GPA</button>
+      </div>
+    </form>
+    <h3 id="result"></h3>
+  </div>
+
+  <script>
+    const gradeScale = {
+      'CPA': { 'A': 4.33, 'A-': 4.0, 'B+': 3.66, 'B': 3.33, 'B-': 3.0, 'C+': 2.66, 'C': 2.33, 'C-': 2.0, 'D+': 1.66, 'D': 1.33, 'D-': 1.0, 'F': 0.0 },
+      'ACC': { 'A': 4.66, 'A-': 4.33, 'B+': 4.0, 'B': 3.66, 'B-': 3.33, 'C+': 3.0, 'C': 2.66, 'C-': 2.33, 'D+': 2.0, 'D': 1.66, 'D-': 1.33, 'F': 0.0 },
+      'AP':  { 'A': 5.0,  'A-': 4.66, 'B+': 4.33, 'B': 4.0,  'B-': 3.66, 'C+': 3.33, 'C': 3.0,  'C-': 2.66, 'D+': 2.33, 'D': 2.0,  'D-': 1.66, 'F': 0.0 }
+    };
+
+    const gradeOptions = Object.keys(gradeScale['CPA'])
+      .map(g => `<option value="${g}">${g}</option>`)
+      .join('');
+
+    function createRow(i) {
+      return `
+        <tr class="course">
+          <td><input type="text" class="class-name" placeholder="Class ${i+1}"></td>
+          <td>
+            <select class="level">
+              <option value="CPA">CPA</option>
+              <option value="ACC">ACC</option>
+              <option value="AP">AP</option>
+            </select>
+          </td>
+          <td><select class="grade">${gradeOptions}</select></td>
+          <td><select class="grade">${gradeOptions}</select></td>
+          <td><select class="grade"><option value="">--</option>${gradeOptions}</select></td>
+          <td><select class="grade"><option value="">--</option>${gradeOptions}</select></td>
+          <td><button type="button" class="delete-btn" onclick="deleteCourse(this)">X</button></td>
+        </tr>
+      `;
+    }
+
+    // Default 7 courses
+    const container = document.getElementById('gradesContainer');
+    container.innerHTML = Array(7).fill(0).map((_, i) => createRow(i)).join('');
+
+    function addCourse() {
+      const rowCount = container.querySelectorAll('.course').length;
+      container.insertAdjacentHTML('beforeend', createRow(rowCount));
+    }
+
+    function deleteCourse(button) {
+      button.closest('tr').remove();
+    }
+
+    function calculateGPA() {
+      let courses = document.querySelectorAll('.course');
+      let totalGPA = 0;
+      let count = 0;
+
+      courses.forEach(course => {
+        let level = course.querySelector('.level').value;
+        let grades = Array.from(course.querySelectorAll('.grade'))
+                          .map(s => s.value)
+                          .filter(g => g !== "");
+        if (grades.length > 0) {
+          let sum = grades.reduce((acc, g) => acc + gradeScale[level][g], 0);
+          let avg = sum / grades.length;
+          totalGPA += avg;
+          count++;
         }
-        
-        function calculateGPA() {
-            let courses = document.querySelectorAll('.course');
-            let totalGPA = 0;
-            let count = 0;
-            
-            courses.forEach(course => {
-                let level = course.querySelector('.level').value;
-                let grades = Array.from(course.querySelectorAll('.grade')).map(select => select.value).filter(grade => grade !== "");
-                
-                let sum = grades.reduce((acc, grade) => acc + gradeScale[level][grade], 0);
-                let avg = sum / grades.length;
-                
-                totalGPA += avg;
-                count++;
-            });
-            
-            let finalGPA = totalGPA / count;
-            document.getElementById('result').innerText = `Your Weighted GPA: ${finalGPA.toFixed(2)}`;
-        }
-    </script>
+      });
+
+      let finalGPA = count > 0 ? (totalGPA / count).toFixed(2) : "0.00";
+      document.getElementById('result').innerText = `Your Weighted GPA: ${finalGPA}`;
+    }
+  </script>
 </body>
 </html>
